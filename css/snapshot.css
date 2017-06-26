@@ -1,0 +1,54 @@
+#main-menu {
+  margin-top: -15px;
+}
+
+.htitle {
+  margin-top: 10px;
+}
+
+.inlineTitle {
+  display: inline-block;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-weight: bold;
+}
+
+h5.inlineTitle {
+  margin-top: 5px;
+}
+
+
+.right {
+  float: right;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.snapshot-actions {
+  text-align: right;
+}
+
+#loading-overlay {
+  position: fixed;
+
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  display: none;
+}
+
+#loading-overlay h1 {
+  position: fixed;
+  bottom: 10%;
+  width: 100%;
+  text-align: center;
+}
