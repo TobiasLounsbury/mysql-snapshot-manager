@@ -24,7 +24,7 @@ define("MYSQL_HOST", "localhost");
 define("MYSQL_PORT", "3306");
 
 //MySql Username to use to connect
-define("MYSQL_USER", "root");
+define("MYSQL_USER", "user");
 
 //MySql password to use to connect
-define("MYSQL_PASSWORD", "password");
+define("MYSQL_PASSWORD", "");
