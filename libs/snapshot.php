@@ -7,7 +7,8 @@
  * @return string
  */
 function getProjectPath($projectName) {
-  return STORAGE_PATH ."/". $projectName;
+  global $msnap_settings;
+  return $msnap_settings['STORAGE_PATH'] ."/". $projectName;
 }
 
 /**
@@ -18,7 +19,8 @@ function getProjectPath($projectName) {
  * @return string
  */
 function getSnapshotPath($projectName, $snapshotName) {
-  return STORAGE_PATH ."/". $projectName ."/". $snapshotName;
+  global $msnap_settings;
+  return $msnap_settings['STORAGE_PATH'] ."/". $projectName ."/". $snapshotName;
 }
 
 /**
@@ -27,9 +29,10 @@ function getSnapshotPath($projectName, $snapshotName) {
  * @return array
  */
 function getAllProjects() {
+  global $msnap_settings;
   $list = array();
 
-  $dirs = scandir(STORAGE_PATH);
+  $dirs = scandir($msnap_settings['STORAGE_PATH']);
 
   foreach ($dirs as $dir) {
     $project = loadProjectDef($dir);
@@ -87,13 +90,14 @@ function loadProjectSnapshots($project) {
  * @return bool
  */
 function verifyProjectFolder($projectName) {
+  global $msnap_settings;
   $path = getProjectPath($projectName);
   if(is_dir($path)) {
     return true;
   }
 
-  if(mkdir($path, DEFAULT_CHMOD)) {
-    chmod($path, DEFAULT_CHMOD);
+  if(mkdir($path, $msnap_settings['DEFAULT_CHMOD'])) {
+    chmod($path, $msnap_settings['DEFAULT_CHMOD']);
     return true;
   }
   return false;
@@ -108,6 +112,7 @@ function verifyProjectFolder($projectName) {
  * @return bool
  */
 function saveProject($project, $data) {
+  global $msnap_settings;
   $path = getProjectPath($project) ."/project.json";
 
   if(array_key_exists("snapshots", $data)) {
@@ -116,7 +121,7 @@ function saveProject($project, $data) {
 
   $json = json_encode($data);
   if(file_put_contents($path, $json) !== false ) {
-    chmod($path, DEFAULT_CHMOD);
+    chmod($path, $msnap_settings['DEFAULT_CHMOD']);
     return true;
   }
 
@@ -132,17 +137,18 @@ function saveProject($project, $data) {
  * @return bool
  */
 function createProjectSnapshot($project, $name) {
+  global $msnap_settings;
   $path = getSnapshotPath($project['name'], $name);
-  if(mkdir($path, DEFAULT_CHMOD)) {
-    chmod($path, DEFAULT_CHMOD);
+  if(mkdir($path, $msnap_settings['DEFAULT_CHMOD'])) {
+    chmod($path, $msnap_settings['DEFAULT_CHMOD']);
     foreach($project['schemas'] as $schema) {
       $backupFile = $path ."/". $schema .".sql.gz";
-      $command = "mysqldump --opt -h " . MYSQL_HOST . " -P ". MYSQL_PORT ." -u". getDBUser() ." -p".  getDBPass() ." {$schema} | gzip > {$backupFile}";
+      $command = "mysqldump --opt -h " . $msnap_settings['MYSQL_HOST'] . " -P ". $msnap_settings['MYSQL_PORT'] ." -u". getDBUser() ." -p".  getDBPass() ." {$schema} | gzip > {$backupFile}";
       system($command);
       if(filesize ( $backupFile ) < 100) {
         return false;
       }
-      chmod($backupFile, DEFAULT_CHMOD);
+      chmod($backupFile, $msnap_settings['DEFAULT_CHMOD']);
     }
 
     return true;
@@ -160,6 +166,7 @@ function createProjectSnapshot($project, $name) {
  * @return bool|array
  */
 function restoreProjectSnapshot(&$project, $snapshot) {
+  global $msnap_settings;
 
   $path = getSnapshotPath($project['name'], $snapshot);
 
@@ -188,7 +195,7 @@ function restoreProjectSnapshot(&$project, $snapshot) {
     }
 
     //restore the snapshot to the selected schema
-    $command = "gunzip < {$schemaFile} | mysql -h " . MYSQL_HOST . " -P ". MYSQL_PORT ." -u". getDBUser() ." -p".  getDBPass() ." {$schema}";
+    $command = "gunzip < {$schemaFile} | mysql -h " . $msnap_settings['MYSQL_HOST'] . " -P ". $msnap_settings['MYSQL_PORT'] ." -u". getDBUser() ." -p".  getDBPass() ." {$schema}";
     system($command);
 
     //Verify the import was successful

@@ -1,6 +1,8 @@
 <?php
 
-require_once("settings.php");
+require_once "bootstrap.php";
+$msnap_settings = read_settings();
+
 require_once "libs/utility.php";
 require_once "libs/database.php";
 require_once "libs/snapshot.php";
@@ -19,7 +21,6 @@ if(!attemptDBConnect()) {
 } else {
   $showMenu = true;
 }
-
 
 
 

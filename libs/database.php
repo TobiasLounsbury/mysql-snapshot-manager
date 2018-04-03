@@ -10,15 +10,17 @@ $db = false;
  * @return bool|string
  */
 function getDBUser() {
+  global $msnap_settings;
 
   if(PHP_SAPI == "cli") {
-    return MYSQL_USER;
+    return $msnap_settings['MYSQL_USER'];
   }
+
 
   if(array_key_exists("username", $_SESSION)) {
     return $_SESSION['username'];
-  } else if (defined("MYSQL_USER")) {
-    return MYSQL_USER;
+  } else if(array_key_exists("MYSQL_USER", $msnap_settings)) {
+    return $msnap_settings['MYSQL_USER'];
   }
 
   return false;
@@ -30,15 +32,16 @@ function getDBUser() {
  * @return bool|string
  */
 function getDBPass() {
+  global $msnap_settings;
 
   if(PHP_SAPI == "cli") {
-    return MYSQL_PASSWORD;
+    return $msnap_settings['MYSQL_PASSWORD'];
   }
 
   if(array_key_exists("password", $_SESSION)) {
     return $_SESSION['password'];
-  } else if (defined("MYSQL_PASSWORD") && !FORCE_LOGIN) {
-    return MYSQL_PASSWORD;
+  } else if(array_key_exists("MYSQL_PASSWORD", $msnap_settings) && !$msnap_settings['FORCE_LOGIN']) {
+    return $msnap_settings['MYSQL_PASSWORD'];
   }
 
   return false;
@@ -54,7 +57,7 @@ function getDBPass() {
  * @return bool
  */
 function attemptDBConnect($username = null, $password = null) {
-  global $db;
+  global $db, $msnap_settings;
 
 
   if(is_null($username)) {
@@ -71,7 +74,7 @@ function attemptDBConnect($username = null, $password = null) {
     }
   }
 
-  $db = new mysqli(MYSQL_HOST, $username, $password);
+  $db = new mysqli($msnap_settings['MYSQL_HOST'], $username, $password);
 
   if ($db->connect_errno) {
     return false;
