@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 require_once("bootstrap.php");
 $msnap_settings = read_settings();
@@ -20,6 +19,7 @@ function displayHelp() {
   echo "\tlist <project> - List all snapshots for project\n";
   echo "\trestore <project> <snapshot> - Restore selected snapshot for project\n";
   echo "\tsnapshot <project> <snapshot_name> - Create a snapshot for project with given name\n";
+  echo "\tserve <host>:<port> - Start the PHP development server for GUI\n";
 }
 
 if (count($argv) == 1) {
@@ -179,6 +179,30 @@ switch ($argv[1]) {
   case "info":
     echo "This has not been implemented yet\n";
     break;
+
+
+  /**
+   * Start the development server with this
+   */
+  case "serve":
+
+    //Default host and port
+    $hostPort = "localhost:8080";
+    if (count($argv) > 2) {
+      $hostPort = $argv[2];
+    }
+
+    if(substr($argv[0],-4) == "phar") {
+      $cmd = "$argv[0]";
+    } else {
+      $cmd = "-t ". __DIR__;
+    }
+
+    echo "Attempting to start server on - {$hostPort}\n";
+    exec("php -S {$hostPort} {$cmd}");
+    break;
+
+
   default:
     echo "Unknown action '{$argv[1]}'\n\n";
     displayHelp();
