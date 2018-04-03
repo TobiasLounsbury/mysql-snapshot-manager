@@ -1,4 +1,5 @@
 .idea
 snapshots/*
 !snapshots/index.php
+build/*
 settings.php

@@ -23,7 +23,10 @@ if(!attemptDBConnect()) {
 }
 
 
-
+$prefix = "";
+if ( defined("MSNAP_PREFIX")) {
+  $prefix = MSNAP_PREFIX."/";
+}
 include "templates/header.tpl";
 
 if($showMenu) {
